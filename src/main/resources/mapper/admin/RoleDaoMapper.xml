@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.admin.RoleDao">
+    <cache/>
+    <resultMap id="RoleDaoResultMapper" type="com.gegehydro.store.entity.assistant.VueAssistant">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="show_name" property="label" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="UserRoleMapper" type="com.gegehydro.store.entity.assistant.VueAssistant">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="email" property="label" jdbcType="VARCHAR"/>
+    </resultMap>
+    <select id="selectRoleByUser" resultType="java.lang.String">
+        SELECT sr.show_name
+        FROM sys_role sr, sys_user_role sur
+        WHERE sr.id = sur.role_id AND sur.user_id = #{id}
+    </select>
+    <update id="updateUserRole" flushCache="true">
+        UPDATE sys_user_role
+        SET role_id = #{status}
+        WHERE user_id = #{id}
+    </update>
+    <select id="findList" resultMap="RoleDaoResultMapper">
+        SELECT id, show_name
+        FROM sys_role
+    </select>
+    <select id="selectUsersByRole" parameterType="com.gegehydro.store.entity.assistant.VueAssistant"
+            resultMap="UserRoleMapper">
+        SELECT
+        u.id,u.email
+        FROM
+	    users u
+	    LEFT JOIN sys_user_role sur ON u.id = sur.user_id
+	    WHERE sur.role_id = #{id}
+    </select>
+</mapper>

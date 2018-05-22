@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.admin.AdminDataDao">
+    <resultMap id="AdminDataDaoResultMapper" type="com.gegehydro.store.entity.assistant.VueAssistant">
+        <id column="id" jdbcType="INTEGER" property="num"/>
+        <result column="day" jdbcType="TIMESTAMP" property="dates"/>
+    </resultMap>
+
+    <select id="loginPopulation" resultMap="AdminDataDaoResultMapper">
+        SELECT
+        count( * ) as 'id',
+        DATE_FORMAT(operate_date,'%m-%d') as 'day'
+        FROM
+        user_login_logs
+        WHERE
+        DATE_SUB( curdate( ), INTERVAL 7 DAY ) &lt;= DATE( operate_date )
+        GROUP BY DATE_FORMAT(operate_date,'%Y-%m-%d')
+    </select>
+</mapper>

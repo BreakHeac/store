@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.UserDao">
+    <cache/>
+    <resultMap id="UserDaoResultMap" type="com.gegehydro.store.entity.Users">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="operate_ip" jdbcType="VARCHAR" property="operateIp"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <collection property="roles" ofType="java.lang.String" javaType="java.util.List">
+            <result column="roles"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="UserResultMap" type="com.gegehydro.store.entity.Users">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="email" jdbcType="VARCHAR" property="email"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="operate_ip" jdbcType="VARCHAR" property="operateIp"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+    </resultMap>
+
+    <resultMap id="UserAssistantMap" type="com.gegehydro.store.entity.assistant.VueAssistant">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="email" jdbcType="VARCHAR" property="value"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="show_name" jdbcType="VARCHAR" property="label"/>
+    </resultMap>
+
+    <select id="findUserList" parameterType="com.gegehydro.store.entity.Users" resultMap="UserAssistantMap">
+        SELECT
+        u.id,u.email,u.status,sr.show_name
+        FROM
+	        users u
+	    LEFT JOIN sys_user_role syr ON u.id = syr.user_id
+	    LEFT JOIN sys_role sr ON syr.role_id = sr.id
+        WHERE
+        u.email LIKE CONCAT ('%',#{email},'%')
+    </select>
+
+    <select id="findIdByEmail" resultType="int">
+        SELECT id
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <select id="findByEmail" resultMap="UserDaoResultMap" parameterType="java.lang.String">
+        SELECT
+        u.email,
+        u.password,
+        sr.roles
+        FROM
+        users u
+        LEFT JOIN sys_user_role syr ON u.id = syr.user_id
+        LEFT JOIN sys_role sr ON syr.role_id = sr.id
+        WHERE u.email = #{email}
+    </select>
+
+    <select id="selectQuantityByEmail" parameterType="com.gegehydro.store.entity.Users" resultType="int">
+        SELECT COUNT(*)
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <select id="selectUserByEmail" parameterType="com.gegehydro.store.entity.Users" resultMap="UserResultMap">
+        SELECT id,email,password,status
+        FROM users
+        WHERE email = #{email}
+    </select>
+
+    <insert id="insertRoles" flushCache="true">
+        INSERT INTO sys_user_role(user_id, role_id)
+        VALUE (#{userId},#{roleId})
+    </insert>
+
+    <insert id="insert" parameterType="com.gegehydro.store.entity.Users" useGeneratedKeys="true" keyColumn="id"
+            keyProperty="id" flushCache="true">
+        INSERT INTO users
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="email != null">
+                email,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="operateIp != null">
+                operate_ip,
+            </if>
+            <if test="operateDate != null">
+                operate_date,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="email != null">
+                #{email},
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="operateIp != null">
+                #{operateIp},
+            </if>
+            <if test="operateDate != null">
+                #{operateDate},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+        </trim>
+    </insert>
+</mapper>

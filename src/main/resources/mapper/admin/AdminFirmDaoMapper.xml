@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.admin.AdminFirmDao">
+    <resultMap id="AdminFirmDaoResultMapper" type="com.gegehydro.store.entity.Firm">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="operate_ip" jdbcType="VARCHAR" property="operateIp"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <association property="users" javaType="com.gegehydro.store.entity.Users">
+            <id column="user_id" jdbcType="INTEGER" property="id"/>
+            <result column="status" jdbcType="INTEGER" property="status"/>
+        </association>
+    </resultMap>
+
+    <select id="count" parameterType="com.gegehydro.store.entity.Firm" resultType="int">
+        SELECT count(*)
+        FROM firm
+        WHERE name = #{name}
+    </select>
+
+    <insert id="insert" parameterType="com.gegehydro.store.entity.Firm" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO firm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="users != null and users.id != null">
+                user_id,
+            </if>
+            <if test="operateDate != null">
+                operate_date,
+            </if>
+            <if test="operateIp != null">
+                operate_ip,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="users != null and users.id != null">
+                #{users.id},
+            </if>
+            <if test="operateDate != null">
+                #{operateDate},
+            </if>
+            <if test="operateIp != null">
+                #{operateIp},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.gegehydro.store.entity.Firm">
+        UPDATE firm
+        SET status = 1
+        WHERE id = #{id}
+    </update>
+
+    <select id="findList" parameterType="com.gegehydro.store.entity.Firm" resultMap="AdminFirmDaoResultMapper">
+        SELECT name
+        FROM firm
+        <where>
+            <if test="name != null">
+                name LIKE CONCAT('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

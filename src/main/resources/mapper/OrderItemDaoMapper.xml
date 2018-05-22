@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.OrderItemDao">
+    <resultMap id="orderItemDaoResultMapper" type="com.gegehydro.store.entity.OrderItem">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="order_id" jdbcType="INTEGER" property="orderId"/>
+        <result column="app_id" jdbcType="INTEGER" property="appId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="explored" jdbcType="INTEGER" property="explored"/>
+        <result column="key" jdbcType="VARCHAR" property="key"/>
+    </resultMap>
+
+    <update id="updateOrderStatus" parameterType="com.gegehydro.store.entity.OrderItem">
+        UPDATE `order`
+        SET status = 1
+        WHERE id = #{orderId}
+    </update>
+
+    <update id="update" parameterType="com.gegehydro.store.entity.OrderItem">
+        UPDATE orderItem
+        SET
+        explored = 1,`key` = #{key}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findList" parameterType="com.gegehydro.store.entity.OrderItem" resultMap="orderItemDaoResultMapper">
+        SELECT
+	        o.id,o.price,o.order_id,o.app_id,o.type,o.explored,o.`key`,a.`name`
+        FROM
+	        orderItem o
+	    LEFT JOIN apps a ON o.app_id = a.id
+	    WHERE
+	        o.order_id = #{id}
+	    AND
+	        o.user_id = #{users.id}
+    </select>
+
+    <select id="find" parameterType="com.gegehydro.store.entity.OrderItem" resultMap="orderItemDaoResultMapper">
+        SELECT
+            o.id,o.price,o.order_id,o.app_id,o.explored,o.`key`,a.`name`
+        FROM
+            orderItem o
+        LEFT JOIN apps a ON o.app_id = a.id
+        WHERE
+            o.user_id = #{users.id}
+        AND
+            o.id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.gegehydro.store.entity.OrderItem">
+        INSERT INTO orderItem
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="price != null">
+                price,
+            </if>
+            <if test="appId != null">
+                app_id,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="id != null">
+                user_id,
+            </if>
+            <if test="operateIp != null">
+                operate_ip,
+            </if>
+            <if test="operateDate != null">
+                operate_date,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="appId != null">
+                #{appId},
+            </if>
+            <if test="orderId != null">
+                #{orderId},
+            </if>
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="operateIp != null">
+                #{operateIp},
+            </if>
+            <if test="operateDate != null">
+                #{operateDate},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+        </trim>
+    </insert>
+</mapper>

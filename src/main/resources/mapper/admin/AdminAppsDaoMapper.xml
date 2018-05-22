@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.admin.AdminAppDao">
+    <cache/>
+    <resultMap id="AppsAdminResultMapper" type="com.gegehydro.store.entity.Apps">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="producer" jdbcType="VARCHAR" property="producer"/>
+        <result column="publisher" jdbcType="VARCHAR" property="publisher"/>
+        <result column="language" jdbcType="VARCHAR" property="language"/>
+        <result column="list_date" jdbcType="TIMESTAMP" property="listDate"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="discount" jdbcType="INTEGER" property="discount"/>
+        <result column="discount_price" jdbcType="DECIMAL" property="discountPrice"/>
+        <result column="discount_off" jdbcType="INTEGER" property="discountOff"/>
+        <result column="discount_start" jdbcType="TIMESTAMP" property="discountStart"/>
+        <result column="discount_end" jdbcType="TIMESTAMP" property="discountEnd"/>
+        <result column="cover_img" jdbcType="VARCHAR" property="coverImg"/>
+        <result column="introduction" jdbcType="VARCHAR" property="introduction"/>
+        <result column="flag" jdbcType="VARCHAR" property="flag"/>
+        <result column="out_of_stock" jdbcType="INTEGER" property="outOfStock"/>
+        <result column="operate_ip" jdbcType="VARCHAR" property="operateIp"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <association property="users" javaType="com.gegehydro.store.entity.Users">
+            <id column="users_id" jdbcType="INTEGER" property="id"/>
+            <result column="email" jdbcType="VARCHAR" property="email"/>
+            <result column="password" jdbcType="VARCHAR" property="password"/>
+            <result column="operate_ip" jdbcType="VARCHAR" property="operateIp"/>
+            <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+            <result column="status" jdbcType="INTEGER" property="status"/>
+        </association>
+    </resultMap>
+    <resultMap id="AppAssistantMap" type="com.gegehydro.store.entity.assistant.VueAssistant">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="value"/>
+    </resultMap>
+    <select id="findUserList" parameterType="com.gegehydro.store.entity.Apps" resultMap="AppAssistantMap">
+        SELECT
+        id, name
+        FROM
+        apps
+        WHERE
+        name LIKE CONCAT("%",#{name},"%")
+    </select>
+    <update id="update" parameterType="com.gegehydro.store.entity.Apps" flushCache="true">
+        UPDATE apps
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="producer != null">
+                producer = #{producer},
+            </if>
+            <if test="publisher != null">
+                publisher = #{publisher},
+            </if>
+            <if test="language != null">
+                language = #{language},
+            </if>
+            <if test="listDate != null">
+                list_date = #{listDate},
+            </if>
+            <if test="price != null">
+                price = #{price},
+            </if>
+            <if test="discount != null">
+                discount = #{discount},
+            </if>
+            <if test="discountPrice != null">
+                discount_price = #{discountPrice},
+            </if>
+            <if test="discountOff != null">
+                discount_off = #{discountOff},
+            </if>
+            <if test="discountStart != null">
+                discount_start = #{discountStart},
+            </if>
+            <if test="discountEnd != null">
+                discount_end = #{discountEnd},
+            </if>
+            <if test="coverImg != null">
+                cover_img = #{coverImg},
+            </if>
+            <if test="introduction != null">
+                introduction = #{introduction},
+            </if>
+            <if test="flag != null">
+                flag = #{flag},
+            </if>
+            <if test="outOfStock != null">
+                out_of_stock = #{outOfStock},
+            </if>
+            <if test="users != null and users.id != null">
+                operator_id = #{users.id},
+            </if>
+            <if test="operateIp != null">
+                operate_ip = #{operateIp},
+            </if>
+            <if test="operateDate != null">
+                operate_date = #{operateDate},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <insert id="insert" parameterType="com.gegehydro.store.entity.Apps" useGeneratedKeys="true" keyProperty="id"
+            flushCache="true">
+        INSERT INTO apps
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="producer != null">
+                producer,
+            </if>
+            <if test="publisher != null">
+                publisher,
+            </if>
+            <if test="language != null">
+                language,
+            </if>
+            <if test="listDate != null">
+                list_date,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="discount != null">
+                discount,
+            </if>
+            <if test="discountPrice != null">
+                discount_price,
+            </if>
+            <if test="discountOff != null">
+                discount_off,
+            </if>
+            <if test="discountStart != null">
+                discount_start,
+            </if>
+            <if test="discountEnd != null">
+                discount_end,
+            </if>
+            <if test="coverImg != null">
+                cover_img,
+            </if>
+            <if test="introduction != null">
+                introduction,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+            <if test="outOfStock != null">
+                out_of_stock,
+            </if>
+            <if test="users != null and users.id != null">
+                operator_id,
+            </if>
+            <if test="operateIp != null">
+                operate_ip,
+            </if>
+            <if test="operateDate != null">
+                operate_date,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name},
+            </if>
+            <if test="producer != null">
+                #{producer},
+            </if>
+            <if test="publisher != null">
+                #{publisher},
+            </if>
+            <if test="language != null">
+                #{language},
+            </if>
+            <if test="listDate != null">
+                #{listDate},
+            </if>
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="discount != null">
+                #{discount},
+            </if>
+            <if test="discountPrice != null">
+                #{discountPrice},
+            </if>
+            <if test="discountOff != null">
+                #{discountOff},
+            </if>
+            <if test="discountStart != null">
+                #{discountStart},
+            </if>
+            <if test="discountEnd != null">
+                #{discountEnd},
+            </if>
+            <if test="coverImg != null">
+                #{coverImg},
+            </if>
+            <if test="introduction != null">
+                #{introduction},
+            </if>
+            <if test="flag != null">
+                #{flag},
+            </if>
+            <if test="outOfStock != null">
+                #{outOfStock},
+            </if>
+            <if test="users != null and users.id != null">
+                #{users.id},
+            </if>
+            <if test="operateIp != null">
+                #{operateIp},
+            </if>
+            <if test="operateDate != null">
+                #{operateDate},
+            </if>
+        </trim>
+    </insert>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.CartDao">
+    <resultMap id="CartDaoResultMap" type="com.gegehydro.store.entity.Cart">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <collection property="apps" ofType="com.gegehydro.store.entity.Apps">
+            <id column="app_id" jdbcType="INTEGER" property="id"/>
+            <result column="name" jdbcType="VARCHAR" property="name"/>
+            <result column="price" jdbcType="DECIMAL" property="price"/>
+            <result column="discount" jdbcType="INTEGER" property="discount"/>
+            <result column="discount_price" jdbcType="DECIMAL" property="discountPrice"/>
+            <result column="discount_off" jdbcType="INTEGER" property="discountOff"/>
+            <result column="discount_start" jdbcType="TIMESTAMP" property="discountStart"/>
+            <result column="discount_end" jdbcType="TIMESTAMP" property="discountEnd"/>
+            <result column="cover_img" jdbcType="VARCHAR" property="coverImg"/>
+            <result column="flag" jdbcType="VARCHAR" property="flag"/>
+            <result column="out_of_stock" jdbcType="INTEGER" property="outOfStock"/>
+        </collection>
+    </resultMap>
+    <resultMap id="cartResultMapper" type="com.gegehydro.store.entity.Cart">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="app_id" jdbcType="INTEGER" property="appId"/>
+    </resultMap>
+    <sql id="briefSelect">
+        ca.id,ca.operate_date,ca.app_id,a.name,a.price,a.discount,a.discount_price,a.discount_off,a.discount_start,a.discount_end,a.cover_img,a.flag,a.out_of_stock
+    </sql>
+
+    <select id="count" parameterType="com.gegehydro.store.entity.Users" resultType="int">
+        SELECT
+        COUNT( * )
+        FROM
+        cart
+        WHERE
+        operator_id = #{id}
+        AND flag = 0
+        <if test="appId != null and appId != ''">
+            AND app_id = #{appId}
+        </if>
+    </select>
+
+    <select id="find" parameterType="com.gegehydro.store.entity.Users" resultMap="cartResultMapper">
+        SELECT
+        id,app_id
+        FROM
+        cart
+        WHERE
+        id = #{id}
+        AND operator_id = #{users.id}
+        AND flag = 0
+    </select>
+
+    <select id="findList" parameterType="com.gegehydro.store.entity.Users" resultMap="CartDaoResultMap">
+        SELECT
+        <include refid="briefSelect"/>
+        FROM
+        cart ca
+        LEFT JOIN apps a ON ca.app_id = a.id
+        WHERE ca.operator_id = #{id}
+        AND ca.flag = 0
+    </select>
+
+    <insert id="insert" parameterType="com.gegehydro.store.entity.Cart" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+        INSERT INTO cart
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="appId != null">
+                app_id,
+            </if>
+            <if test="id != null">
+                operator_id,
+            </if>
+            <if test="operateIp != null">
+                operate_ip,
+            </if>
+            <if test="operateDate != null">
+                operate_date,
+            </if>
+            <if test="flag != null">
+                flag,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="appId != null">
+                #{appId},
+            </if>
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="operateIp != null">
+                #{operateIp},
+            </if>
+            <if test="operateDate != null">
+                #{operateDate},
+            </if>
+            <if test="flag != null">
+                #{flag},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.gegehydro.store.entity.Cart">
+        UPDATE cart
+        SET flag = 1
+        WHERE id = #{id}
+        AND operator_id = #{users.id}
+    </update>
+</mapper>

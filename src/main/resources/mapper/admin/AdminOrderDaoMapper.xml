@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.admin.AdminOrderDao">
+    <resultMap id="AdminOrderDaoResultMapper" type="com.gegehydro.store.entity.Order">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="billing" jdbcType="VARCHAR" property="billing"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <result column="operate_ip" jdbcType="VARCHAR" property="operateIp"/>
+        <result column="received" jdbcType="INTEGER" property="received"/>
+        <association property="users" javaType="com.gegehydro.store.entity.Users">
+            <id column="user_id" jdbcType="INTEGER" property="id"/>
+            <result column="email" jdbcType="VARCHAR" property="email"/>
+            <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+            <result column="status" jdbcType="INTEGER" property="status"/>
+        </association>
+    </resultMap>
+
+    <select id="findList" parameterType="com.gegehydro.store.entity.Order" resultMap="AdminOrderDaoResultMapper">
+        SELECT
+        o.id,o.price,o.status,o.billing,o.operate_date,o.type,o.user_id,u.email,o.operate_ip,u.operate_date,u.status,o.received
+        FROM `order` o
+        LEFT JOIN users u ON o.owner = u.id
+        <where>
+            <if test="billing != null">
+                AND billing = #{billing}
+            </if>
+            <if test="id != null and id != ''">
+                AND user_id = #{id}
+                OR owner = #{id}
+            </if>
+        </where>
+        ORDER BY o.operate_date DESC
+    </select>
+
+    <update id="update" parameterType="com.gegehydro.store.entity.Order">
+        UPDATE `order`
+        SET status = #{status}
+        WHERE id = #{id}
+    </update>
+</mapper>

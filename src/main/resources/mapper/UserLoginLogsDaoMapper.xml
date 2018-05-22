@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.UserLoginLogsDao">
+    <resultMap id="UserLoginLogsDaoResultMapper" type="com.gegehydro.store.entity.UserLoginLogs">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="id"/>
+        <result column="operate_ip" jdbcType="VARCHAR" property="operateIp"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+    </resultMap>
+
+    <select id="findList" resultMap="UserLoginLogsDaoResultMapper">
+        SELECT id,user_id,operate_date,operate_ip
+        FROM user_login_logs
+        WHERE user_id = #{id}
+    </select>
+    <insert id="insert" parameterType="com.gegehydro.store.entity.UserLoginLogs">
+        INSERT INTO user_login_logs
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                user_id,
+            </if>
+            <if test="operateIp != null">
+                operate_ip,
+            </if>
+            <if test="operateDate != null">
+                operate_date,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="operateIp != null">
+                #{operateIp},
+            </if>
+            <if test="operateDate != null">
+                #{operateDate},
+            </if>
+        </trim>
+    </insert>
+</mapper>

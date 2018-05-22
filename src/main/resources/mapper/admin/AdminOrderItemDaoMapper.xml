@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.admin.AdminOrderItemDao">
+    <resultMap id="adminOrderItemDaoResultMapper" type="com.gegehydro.store.entity.OrderItem">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="app_id" jdbcType="INTEGER" property="appId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="explored" jdbcType="INTEGER" property="explored"/>
+        <result column="key" jdbcType="VARCHAR" property="key"/>
+    </resultMap>
+    <select id="findList" parameterType="com.gegehydro.store.entity.OrderItem"
+            resultMap="adminOrderItemDaoResultMapper">
+        SELECT
+        o.id,o.price,o.order_id,o.app_id,o.type,o.explored,a.`name`
+        FROM
+        orderItem o
+        LEFT JOIN apps a ON o.app_id = a.id
+        <where>
+            <if test="orderId != null">
+                AND o.order_id = #{orderId}
+            </if>
+            <if test="id != null and id != ''">
+                AND user_id = #{id}
+            </if>
+        </where>
+    </select>
+</mapper>

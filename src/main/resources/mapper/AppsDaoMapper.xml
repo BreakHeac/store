@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.AppsDao">
+    <resultMap id="AppsDetailResultMapper" type="com.gegehydro.store.entity.Apps">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="producer" jdbcType="VARCHAR" property="producer"/>
+        <result column="publisher" jdbcType="VARCHAR" property="publisher"/>
+        <result column="language" jdbcType="VARCHAR" property="language"/>
+        <result column="list_date" jdbcType="TIMESTAMP" property="listDate"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="discount" jdbcType="INTEGER" property="discount"/>
+        <result column="discount_price" jdbcType="DECIMAL" property="discountPrice"/>
+        <result column="discount_off" jdbcType="INTEGER" property="discountOff"/>
+        <result column="discount_start" jdbcType="TIMESTAMP" property="discountStart"/>
+        <result column="discount_end" jdbcType="TIMESTAMP" property="discountEnd"/>
+        <result column="cover_img" jdbcType="VARCHAR" property="coverImg"/>
+        <result column="introduction" jdbcType="VARCHAR" property="introduction"/>
+        <result column="flag" jdbcType="VARCHAR" property="flag"/>
+        <result column="out_of_stock" jdbcType="INTEGER" property="outOfStock"/>
+        <collection property="appImgs" ofType="com.gegehydro.store.entity.AppImgs" javaType="java.util.List">
+            <result column="img" jdbcType="VARCHAR" property="img"/>
+            <result column="status" jdbcType="VARCHAR" property="status"/>
+        </collection>
+    </resultMap>
+    <cache/>
+    <sql id="briefSelect">
+        id,name,price,discount,discount_price,discount_off,discount_start,discount_end,cover_img,flag,out_of_stock
+    </sql>
+    <sql id="detailSelect">
+        a.id,a.name,a.producer,a.publisher,a.language,a.list_date,a.price,a.discount,a.discount_price,a.discount_off,a.discount_start,a.discount_end,a.cover_img,a.introduction,a.flag,a.out_of_stock,i.img,i.status
+    </sql>
+    <select id="find" parameterType="com.gegehydro.store.entity.Apps" resultMap="AppsDetailResultMapper">
+        SELECT
+        <include refid="detailSelect"/>
+        FROM
+        apps a
+        LEFT JOIN app_imgs i ON a.id = i.app_id
+        WHERE
+        a.id = #{id}
+        AND i.status = 0
+    </select>
+    <select id="findList" parameterType="com.gegehydro.store.entity.Apps" resultMap="AppsDetailResultMapper">
+        SELECT
+        <include refid="briefSelect"/>
+        FROM apps
+        <where>
+            <if test="id != null and id != ''">
+                AND id = #{id}
+            </if>
+            <if test="name != null">
+                AND name LIKE CONCAT ('%',#{name},'%')
+            </if>
+            <if test="producer != null">
+                AND producer LIKE CONCAT ('%',#{producer},'%')
+            </if>
+            <if test="publisher != null">
+                AND publisher LIKE CONCAT ('%',#{publisher},'%')
+            </if>
+            <if test="language != null">
+                AND language LIKE CONCAT ('%',#{language},'%')
+            </if>
+            <if test="listDate != null">
+                AND list_date = #{listDate}
+            </if>
+            <if test="price != null and price != ''">
+                AND price = #{price}
+            </if>
+            <if test="discount != null and discount != ''">
+                AND discount = #{discount}
+            </if>
+            <if test="discountPrice != null and discountPrice != ''">
+                AND discount_price = #{discountPrice}
+            </if>
+            <if test="discountOff != null and discountOff != ''">
+                AND discount_off = #{discountOff}
+            </if>
+            <if test="discountStart != null">
+                AND discount_start = #{discountStart}
+            </if>
+            <if test="discountEnd != null">
+                AND discount_end = #{discountEnd}
+            </if>
+            <if test="coverImg != null">
+                AND cover_img = #{coverImg}
+            </if>
+            <if test="introduction != null">
+                AND introduction LIKE CONCAT ('%',#{introduction},'%')
+            </if>
+            <if test="outOfStock != null">
+                AND out_of_stock = #{outOfStock}
+            </if>
+            AND flag = 1
+        </where>
+    </select>
+</mapper>

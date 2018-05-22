@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.WarehouseDao">
+    <resultMap id="warehouseDaoResultMapper" type="com.gegehydro.store.entity.Warehouse">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="app_id" jdbcType="INTEGER" property="appId"/>
+        <result column="flag" jdbcType="INTEGER" property="flag"/>
+        <result column="key" jdbcType="INTEGER" property="key"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <result column="operate_ip" jdbcType="VARCHAR" property="operateIp"/>
+        <association property="users" javaType="com.gegehydro.store.entity.Users">
+            <id column="user_id" jdbcType="INTEGER" property="id"/>
+        </association>
+    </resultMap>
+
+    <select id="find" parameterType="com.gegehydro.store.entity.Warehouse" resultMap="warehouseDaoResultMapper">
+        SELECT id,`key`
+        FROM warehouse
+        WHERE app_id = #{appId}
+        AND flag = 0
+        ORDER BY operate_date
+        LIMIT 1
+    </select>
+
+    <update id="update" parameterType="com.gegehydro.store.entity.Warehouse">
+        UPDATE warehouse
+        SET flag = 1
+        WHERE id = #{id}
+    </update>
+
+</mapper>

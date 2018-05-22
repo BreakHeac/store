@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gegehydro.store.dao.OrderDao">
+    <resultMap id="OrderDaoResultMapper" type="com.gegehydro.store.entity.Order">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+        <result column="billing" jdbcType="VARCHAR" property="billing"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <result column="received" jdbcType="INTEGER" property="received"/>
+        <association property="users" javaType="com.gegehydro.store.entity.Users">
+            <id column="user_id" jdbcType="INTEGER" property="id"/>
+            <result column="email" jdbcType="VARCHAR" property="email"/>
+            <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+            <result column="status" jdbcType="INTEGER" property="status"/>
+        </association>
+    </resultMap>
+
+    <select id="find" parameterType="com.gegehydro.store.entity.Order" resultMap="OrderDaoResultMapper">
+        SELECT
+        id,price,status,billing,operate_date
+        FROM `order`
+        WHERE billing = #{billing}
+    </select>
+
+    <select id="count" parameterType="com.gegehydro.store.entity.Order" resultType="int">
+        SELECT COUNT(*)
+        FROM `order`
+        WHERE billing = #{billing}
+    </select>
+
+    <select id="findList" parameterType="com.gegehydro.store.entity.Order" resultMap="OrderDaoResultMapper">
+        SELECT
+        o.id,o.price,o.status,o.operate_date,u.email,o.received,o.billing
+        FROM `order` o
+        LEFT JOIN users u ON u.id = o.user_id
+        WHERE o.user_id = #{id}
+        OR o.`owner` = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.gegehydro.store.entity.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `order`
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="price != null">
+                price,
+            </if>
+            <if test="id != null">
+                user_id,
+            </if>
+            <if test="operateIp != null">
+                operate_ip,
+            </if>
+            <if test="operateDate != null">
+                operate_date,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="billing != null">
+                billing,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="owner != null">
+                `owner`,
+            </if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="price != null">
+                #{price},
+            </if>
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="operateIp != null">
+                #{operateIp},
+            </if>
+            <if test="operateDate != null">
+                #{operateDate},
+            </if>
+            <if test="type != null">
+                #{type},
+            </if>
+            <if test="billing != null">
+                #{billing},
+            </if>
+            <if test="status != null">
+                #{status},
+            </if>
+            <if test="owner != null">
+                #{owner},
+            </if>
+        </trim>
+    </insert>
+    <update id="update" parameterType="com.gegehydro.store.entity.Order">
+        UPDATE `order`
+        SET status = #{status},
+          user_id = #{users.id},
+          operate_date = #{operateDate},
+          operate_ip = #{operateIp},
+          received = 1
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateOrderItemUserId" parameterType="com.gegehydro.store.entity.Order">
+        UPDATE orderItem
+        SET user_id = #{users.id}
+        WHERE order_id = #{id}
+    </update>
+</mapper>

@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    #表示所用配置文件为application-dev.yml
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/gegehydro?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: 123456
+    tomcat:
+      initialSize: 1
+      min-idle: 1
+      max-idle: 20
+      max-wait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 30000
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+  http:
+    multipart:
+      max-file-size: 3MB
+mybatis:
+  configuration:
+    mapUnderscoreToCamelCase: true
+    cache-enabled: false
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.gegehydro.store.entity
+
+

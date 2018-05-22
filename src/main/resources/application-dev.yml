@@ -1,0 +1,8 @@
+server:
+  port: 8080
+logging:
+  file: logs/store.log
+  level:
+    org.springframework:
+      data: DEBUG
+      security: DEBUG
